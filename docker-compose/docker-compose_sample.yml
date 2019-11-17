@@ -1,0 +1,49 @@
+version: "2"
+services:
+
+  nginx:
+    image: nginx
+    restart: always
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - /var/www/html/digital_workspace1:/code
+    ports:
+      - "4003:80"
+    networks:
+      - code-networklatest  
+  php:
+    build: ./php
+    restart: always
+    expose:
+      - "9000"
+    networks:
+      - code-networklatest  
+    volumes:
+      - /var/www/html/digital_workspace1:/code
+
+  mysql:
+    image: mysql
+    restart: always
+    ports:
+      - "3307:3306"
+    volumes:
+      - /data/mysql:/var/lib/mysql
+    networks:
+      - code-networklatest       
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+ 
+  redis:
+    image: redis
+    restart: always
+    ports:
+      - "6378:6379"
+    networks:
+      - code-networklatest 
+    volumes:
+      - /data/redis:/data
+    command: redis-server --appendonly yes
+
+networks:
+    code-networklatest:
+        driver: bridge

@@ -1,0 +1,37 @@
+version: "2"
+services:
+
+  nginx:
+    image: nginx
+    restart: always
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - /var/www/html/projects/digital_workspace:/code
+    ports:
+      - "4003:80"
+    networks:
+      - code-networklatest  
+  php:
+    build: ./php
+    restart: always
+    expose:
+      - "9000"
+    networks:
+      - code-networklatest  
+    volumes:
+      - /var/www/html/projects/digital_workspace:/code
+ 
+  redis:
+    image: redis
+    restart: always
+    ports:
+      - "6378:6379"
+    networks:
+      - code-networklatest 
+    volumes:
+      - /data/redis:/data
+    command: redis-server --appendonly yes
+
+networks:
+    code-networklatest:
+        driver: bridge
